@@ -1,6 +1,5 @@
 var request = require('request-promise');
 var fs = require('fs');
-// var _ = require('lodash');
 
 var prefix = 'https://api.weixin.qq.com/cgi-bin';
 var api = {
@@ -56,8 +55,10 @@ function Wechat(opts) {
 	this.appSecret = opts.appSecret;
 	this.getAccessToken = opts.getAccessToken;
 	this.saveAccessToken = opts.saveAccessToken;
+	this.getTicket = opts.getTicket;
+	this.saveTicket = opts.saveTicket;
 
-	this.fetchAccessToken();
+	// this.fetchAccessToken();
 }
 
 Wechat.prototype.fetchAccessToken = function() {
@@ -69,10 +70,10 @@ Wechat.prototype.fetchAccessToken = function() {
 		}
 	}
 
-	this.getAccessToken()
+	return this.getAccessToken()
 		.then(function(data) {
 			try {
-				data = JSON.parse(data);
+				var data = JSON.parse(data);
 			} catch(e) {
 				return that.updateAccessToken();
 			}
@@ -120,6 +121,77 @@ Wechat.prototype.updateAccessToken = function() {
 		});
 	});
 	
+};
+
+Wechat.prototype.fetchTicket = function() {
+	var that = this;
+
+	return new Promise((resolve, reject) => {
+		that
+		.fetchAccessToken()
+		.then(at_data => {
+			if (that.ticket && that.ticket_expires_in) {
+				if (that.isValidTicket(that)) {
+					console.log("2/valid ticket, direct return");
+					resolve(that);
+					return;
+				}
+			}
+
+			that.getTicket()
+				.then(function(ticket_data) {
+					try {
+						console.log("3/parse from ticket file");
+						ticket_data = JSON.parse(ticket_data);
+					} catch(e) {
+						console.log("4/parse fail, update ");
+						return that.updateTicket(at_data.access_token);
+					}
+					if (that.isValidTicket(ticket_data)) {
+						return Promise.resolve(ticket_data);
+					}else {
+						return that.updateTicket(at_data.access_token);
+					}
+				})
+				.then(function(data) {
+					console.log("5/save ticket");
+					that.ticket = data.ticket;
+					that.ticket_expires_in = data.expires_in;
+					that.saveTicket(data);
+					console.log('ticket----------', that.ticket);
+					resolve(data);
+				});
+		});
+	});
+}
+
+Wechat.prototype.isValidTicket = function(data) {
+	if (!data || !data.ticket || !data.expires_in) {
+		return false;
+	}
+
+	var ticket = data.ticket;
+	var ticket_expires_in = data.expires_in;
+	var now = (new Date().getTime());
+	if (now < ticket_expires_in) {
+		return true;
+	}else {
+		return false;
+	}
+};
+Wechat.prototype.updateTicket = function(access_token) {
+	var url = api.ticket.get + `?access_token=${access_token}&type=jsapi`;
+	console.log(url);
+
+	return new Promise(function(resolve, reject) {
+		request({url: url, json: true}).then(function(response) {
+			var data = response;
+			var now = new Date().getTime();
+			var expires_in = now + data.expires_in*1000 - 20*1000;
+			data.expires_in = expires_in;
+			resolve(data);
+		});
+	});
 };
 
 Wechat.prototype.uploadMaterial = function(type, material, permanent) {

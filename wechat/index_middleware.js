@@ -5,8 +5,6 @@ var util = require('./util');
 var autoReply = require('./autoReply');
 
 exports.get = function(opts) {
-	var wechat = new Wechat(opts);
-	// console.log(wechat);
 	return function *(next) {
 		var token = opts.token;
 		var signature = this.query.signature;
@@ -48,7 +46,7 @@ exports.post = function(opts) {
 		var message = yield util.parseXMLAsync(data);
 		var xml = yield autoReply(message.xml, wechat);
 		console.log(message);
-		// console.log(xml);
+		console.log(xml);
 
 		this.status = 200;
 		this.type = 'application/xml';

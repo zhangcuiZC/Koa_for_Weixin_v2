@@ -367,6 +367,19 @@ function autoReply(message, wechat) {
 					});
 				});
 			});
+		}else if (content === '19') {
+			return new Promise(function(resolve, reject) {
+				wechat.fetchTicket()
+				.then(function(data) {
+					var xml = createXML({
+						ToUserName: message.FromUserName,
+						FromUserName: message.ToUserName,
+						MsgType: 'text',
+						Content: JSON.stringify(data)
+					});
+					resolve(xml);
+				});
+			});
 		}
 		else {
 			return Promise.resolve(createXML({

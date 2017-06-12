@@ -1,6 +1,7 @@
 var util = require('./util');
 var path = require('path');
 var access_token_file = path.join(__dirname, './access_token.txt');
+var ticket_file = path.join(__dirname, './ticket.txt');
 
 module.exports = {
 	wechat: {
@@ -13,6 +14,13 @@ module.exports = {
 		saveAccessToken: function(data) {
 			var d = JSON.stringify(data);
 			return util.writeFileAsync(access_token_file, d);
+		},
+		getTicket: function() {
+			return util.readFileAsync(ticket_file);
+		},
+		saveTicket: function(data) {
+			var d = JSON.stringify(data);
+			return util.writeFileAsync(ticket_file, d);
 		}
 	}
 };
