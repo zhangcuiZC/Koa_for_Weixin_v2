@@ -11,7 +11,7 @@ module.exports = {
 		{
 			"name": "go_to_url",
 			"type": "view",
-			"url": "https://www.baidu.com"
+			"url": "http://www.zhangcui.com.cn/movie"
 		}, 
 		{
 			"name": "scancode_push",

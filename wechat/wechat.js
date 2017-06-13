@@ -132,7 +132,6 @@ Wechat.prototype.fetchTicket = function() {
 		.then(at_data => {
 			if (that.ticket && that.ticket_expires_in) {
 				if (that.isValidTicket(that)) {
-					console.log("2/valid ticket, direct return");
 					resolve(that);
 					return;
 				}
@@ -141,10 +140,8 @@ Wechat.prototype.fetchTicket = function() {
 			that.getTicket()
 				.then(function(ticket_data) {
 					try {
-						console.log("3/parse from ticket file");
 						ticket_data = JSON.parse(ticket_data);
 					} catch(e) {
-						console.log("4/parse fail, update ");
 						return that.updateTicket(at_data.access_token);
 					}
 					if (that.isValidTicket(ticket_data)) {
@@ -154,7 +151,6 @@ Wechat.prototype.fetchTicket = function() {
 					}
 				})
 				.then(function(data) {
-					console.log("5/save ticket");
 					that.ticket = data.ticket;
 					that.ticket_expires_in = data.expires_in;
 					that.saveTicket(data);
@@ -181,7 +177,6 @@ Wechat.prototype.isValidTicket = function(data) {
 };
 Wechat.prototype.updateTicket = function(access_token) {
 	var url = api.ticket.get + `?access_token=${access_token}&type=jsapi`;
-	console.log(url);
 
 	return new Promise(function(resolve, reject) {
 		request({url: url, json: true}).then(function(response) {
@@ -201,7 +196,6 @@ Wechat.prototype.uploadMaterial = function(type, material, permanent) {
 
 	if (permanent) {
 		uploadUrl = api.permanent.upload;
-		// _.extend(form, permanent);
 		Object.assign(form, permanent);
 	}
 
