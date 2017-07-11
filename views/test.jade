@@ -1,0 +1,43 @@
+doctype html
+html
+	head
+		title 微信拖动测试
+		meta(charset="utf-8")
+		meta(name="viewport", content="initial-scale=1, maximum-scale=1, minimum-scale=1")
+		link(rel='stylesheet', href='/stylesheets/style.css')
+		script(src="http://apps.bdimg.com/libs/zepto/1.1.4/zepto.min.js")
+	body
+		#container
+			.header
+				| header
+			.page
+				.box box1 in page
+				.box box2 in page
+				.box box3 in page
+				.box.bottom box4 in page
+	script.
+		$(function() {
+			var startY, endY;
+			var box_height = $('#container').height();
+			$('.page').on('touchstart', function(event) {
+				event.stopPropagation();
+				startY = event.touches[0].pageY;
+			});
+			$('.page').on('touchmove', function(event) {
+				event.stopPropagation();
+				var endY = event.changedTouches[0].pageY;
+				var changedY = endY - startY;
+				var scroll_top = $('.page').scrollTop();
+				if (scroll_top === 0 && changedY > 0) {
+					event.preventDefault();
+				}
+
+				var o = $('.bottom').offset();
+				if (o.top + o.height === box_height && changedY < 0) {
+					event.preventDefault();
+				}
+			});
+			$('.header').on('touchmove', function(event) {
+				event.preventDefault();
+			});
+		});

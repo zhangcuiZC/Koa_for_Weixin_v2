@@ -1,8 +1,52 @@
-body {
+/*body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 a {
   color: #00B7FF;
+}
+*/
+*{
+	padding: 0;
+	margin: 0;
+}
+#container{
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #efefef;
+	color: #fff;
+	text-align: center;
+	font-size: 40px;
+}
+.header{
+	position: absolute;
+	left: 0;
+	right: 0;
+	height: 80px;
+	line-height: 80px;
+	background-color: #ddd;
+}
+.page{
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	top: 80px;
+	background-color: #ccc;
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+}
+.page > *{
+	z-index: 1;
+}
+.box{
+	width: 100%;
+	height: 300px;
+	line-height: 300px;
+	box-sizing: border-box;
+	border-bottom: 2px solid #fff;
 }

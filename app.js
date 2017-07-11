@@ -6,6 +6,7 @@ var app = require('koa')()
 
 var index = require('./routes/index');
 var movie = require('./routes/movie');
+var test = require('./routes/test');
 
 // error handler
 onerror(app);
@@ -31,5 +32,6 @@ app.use(require('koa-static')(__dirname + '/public'));
 // routes definition
 app.use(index.routes(), index.allowedMethods());
 app.use(movie.routes(), movie.allowedMethods());
+app.use(test.routes(), test.allowedMethods());
 
 module.exports = app;
